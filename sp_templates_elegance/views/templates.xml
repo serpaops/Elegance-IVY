@@ -1,0 +1,293 @@
+<odoo>
+    <data>
+
+        <record id="paperformat_larger_footer" model="report.paperformat">
+            <field name="name">Custom Invoice 1</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">60</field>
+            <field name="margin_bottom">65</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">60</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <record id="account.account_invoices" model="ir.actions.report">
+            <field name="paperformat_id" ref="paperformat_larger_footer"/>
+        </record>
+
+        <template id="invoice_template" inherit_id="account.report_invoice_document">
+            <xpath expr="//t" position="replace">
+                <t t-call="web.html_container">
+                    <t t-call="web.basic_layout">
+                        <div style="background-color: black;">
+                            <t t-set="o" t-value="o.with_context(lang=lang if lang else o.partner_id.lang)"/>
+                            <t t-set="forced_vat" t-value="o.fiscal_position_id.foreign_vat"/>
+                            
+                            <style>
+                                @page {
+    
+                                    background-color: #000000;
+                    
+                                }
+                                @header {
+    
+                                    background-color: #000000;
+                    
+                                }
+                    
+                                body {
+                    
+                                    background-color: #000000 !important;
+                    
+                                }
+                    
+                                .page {
+                    
+                                    background-color: #000000 !important;
+                    
+                                    min-height: 100%;
+                    
+                                }
+                                
+                                .invoice-table {
+                                    width: 100%;
+                                    border-collapse: separate;
+                                    border-spacing: 0 8px;
+                                }
+                                
+                                .invoice-table thead tr {
+                                    background-color: #dfd0b0;
+                                    color: #2a2a2a;
+                                }
+                                
+                                .invoice-table thead th {
+                                    padding: 12px 15px;
+                                    font-size: 11px;
+                                    font-weight: bold;
+                                    text-align: left;
+                                    letter-spacing: 1px;
+                                }
+                                
+                                .invoice-table thead th:first-child {
+                                    border-radius: 20px 0 0 20px;
+                                    width: 60px;
+                                }
+                                
+                                .invoice-table thead th:last-child {
+                                    border-radius: 0 20px 20px 0;
+                                    text-align: right;
+                                }
+                                
+                                .invoice-table thead th:nth-child(3),
+                                .invoice-table thead th:nth-child(4) {
+                                    text-align: right;
+                                }
+                                
+                                .invoice-table tbody tr {
+                                    background-color: #dfd0b0;
+                                    color: #2a2a2a;
+                                }
+                                
+                                .invoice-table tbody td {
+                                    padding: 15px;
+                                    font-size: 12px;
+                                }
+                                
+                                .invoice-table tbody td:first-child {
+                                    border-radius: 20px 0 0 20px;
+                                    text-align: center;
+                                    font-weight: bold;
+                                }
+                                
+                                .invoice-table tbody td:last-child {
+                                    border-radius: 0 20px 20px 0;
+                                    text-align: right;
+                                    font-weight: bold;
+                                }
+                                
+                                .invoice-table tbody td:nth-child(3),
+                                .invoice-table tbody td:nth-child(4) {
+                                    text-align: right;
+                                }
+                                
+                                .total-due-row {
+                                    background-color: #dfd0b0;
+                                    color: #2a2a2a;
+                                    padding: 12px 20px;
+                                    border-radius: 25px;
+                                    display: inline-flex;
+                                    margin-top: 10px;
+                                    min-width: 250px;
+                                    justify-content: space-between;
+                                    font-weight: bold;
+                                    font-size: 14px;
+                                }
+                                .elegant-footer {
+                                    background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+                                    padding: 30px 0;
+                                    position: relative;
+                                    overflow: hidden;
+                                }
+                                
+                                .elegant-footer::before {
+                                    content: '';
+                                    position: absolute;
+                                    top: 0;
+                                    right: 0;
+                                    width: 50%;
+                                    height: 100%;
+                                    background: linear-gradient(135deg, transparent 0%, #d9c8a4 100%);
+                                    clip-path: polygon(30% 0, 100% 0, 100% 100%, 0% 100%);
+                                    opacity: 0.9;
+                                    z-index: 1;
+                                }
+                                
+                                .footer-content {
+                                    position: relative;
+                                    z-index: 2;
+                                }
+                                
+                                @media (max-width: 768px) {
+                                    .elegant-footer::before {
+                                        clip-path: none;
+                                        width: 100%;
+                                        opacity: 0.3;
+                                    }
+                                }
+                            </style>
+    
+                            <div class="header" style="font-family: 'Arial', sans-serif; font-size: 12px;">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h5 style="color: #dfd0b0;"><b><u>INVOICE TO</u></b></h5>
+                                        <h4 style="color: #dfd0b0;"><b>CLIENTS NAME.</b></h4>
+                                        <div>
+                                            <div><span t-esc="o.partner_id.name"/></div>
+                                            <div>Phone: <span t-esc="o.partner_id.phone"/></div>
+                                            <div>Email: <span t-esc="o.partner_id.email"/></div>
+                                            <div>Address: <span t-esc="o.partner_id.street"/></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <h5 style="color: #dfd0b0;"><b><u>PAYMENT METHOD</u></b></h5>
+                                        <t t-foreach="o.company_id.partner_id.bank_ids" t-as="bank">
+                                            <div t-if="o.currency_id.name == bank.currency_id.name">
+                                                <t>
+                                                    <div>Acc Name: <span t-esc="bank.partner_id.name"/></div>
+                                                    <div>Bank: <span t-esc="bank.bank_name"/></div>
+                                                    <div>Bank Acc: <span t-esc="bank.acc_number"/></div>
+                                                </t>
+                                                <br/>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="page" style="padding-top: 150px;">
+    
+                                <!-- Invoice Table -->
+                                <div>
+                                    <table class="invoice-table">
+                                        <thead>
+                                            <tr>
+                                                <th>NO</th>
+                                                <th>ITEM DESCRIPTION</th>
+                                                <th>QTY</th>
+                                                <th>PRICE</th>
+                                                <th>TOTAL</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="o.invoice_line_ids" t-as="line">
+                                                <tr>
+                                                    <td><t t-esc="line_index + 1"/></td>
+                                                    <td><t t-esc="line.name"/></td>
+                                                    <td><t t-esc="line.quantity"/></td>
+                                                    <td><t t-esc="'%.2f' % line.price_unit"/></td>
+                                                    <td><t t-esc="'%.2f' % line.price_subtotal"/></td>
+                                                </tr>
+                                            </t>
+                                            <tr t-foreach="range(8 - len(o.invoice_line_ids))" t-as="i">
+                                                <td>&amp;nbsp;</td>
+                                                <td>&amp;nbsp;</td>
+                                                <td>&amp;nbsp;</td>
+                                                <td>&amp;nbsp;</td>
+                                                <td>&amp;nbsp;</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <br/>
+                                    
+                                    <!-- Totals -->
+                                    <div class="row">
+                                        <div class="col-8"/>
+                                        <div class="col-4">
+                                            <div class="row">
+                                                <div class="col-6 text-start" style="color: #dfd0b0;">SUBTOTAL:</div>
+                                                <div class="col-6 text-start" style="color: #dfd0b0;"><span t-esc="'%.2f' % o.amount_untaxed"/></div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-6 text-start" style="color: #dfd0b0;">DISCOUNT:</div>
+                                                <div class="col-6 text-start" style="color: #dfd0b0;"></div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-6 text-start" style="color: #dfd0b0;">TAX:</div>
+                                                <div class="col-6 text-start" style="color: #dfd0b0;"><span t-esc="'%.2f' % o.amount_tax"/></div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-6 text-start" style="color: #dfd0b0;">TOTAL:</div>
+                                                <div class="col-6 text-start" style="color: #dfd0b0;"></div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-6 text-start" style="color: #dfd0b0;">DEPOSIT:</div>
+                                                <div class="col-6 text-start" style="color: #dfd0b0;"></div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-6 text-start" style="color: #dfd0b0;">PAYMENT:</div>
+                                                <div class="col-6 text-start" style="color: #dfd0b0;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <div class="row">
+                                        <div class="col-7"/>
+                                        <div class="col-5 row total-due-row">
+                                            <div class="col-6 text-center">Total Due</div>
+                                            <div class="col-6 text-center"><span t-esc="'%.2f' % o.amount_total"/></div>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <div class="row">
+                                        <div class="col-7"/>
+                                        <div class="col-5 text-center" style="color: #dfd0b0;">
+                                            <h3>Thank You</h3>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            
+                            <div class="footer">
+                                <div class="container footer-content">
+                                    <div class="row">
+                                        <div class="col-3"></div>
+                                        <div class="col-3"></div>
+                                        <div class="col-3"></div>
+                                        <div class="col-3"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                        </div>
+                    </t>                                
+                </t>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>
